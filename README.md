@@ -1,140 +1,132 @@
-# Quantum Crop Forecasting
+# Quantum-Assisted Smart Agriculture – Crop Yield Forecasting & Recommendation System
 
-This repository is a starter scaffold for a student project that forecasts crop production or yield using agricultural data.
+A full-stack, microservice-based smart agriculture application combining 2026 Google Earth Engine (GEE) satellite climate telemetry, classical machine learning (XGBoost, Random Forest), and experimental hybrid quantum-classical algorithms (PennyLane AngleEmbedding + PCA) to provide precise crop yield forecasting (t/ha) and intelligent crop recommendations across all 38 districts of Tamil Nadu.
 
-The project flow is:
-- collect datasets
-- clean and merge them
-- explore the data
-- build a classical baseline model
-- build a hybrid quantum model
-- compare the results
+---
 
-## What You Will Build
+## 🌟 Key Features
 
-- `datasets/raw/`: original downloaded CSV files
-- `datasets/processed/`: cleaned and merged files
-- `notebooks/01_Data_Collection.ipynb`: load and inspect the first dataset
-- `notebooks/02_Data_Preprocessing.ipynb`: clean and prepare the data
-- `notebooks/03_EDA.ipynb`: charts, summaries, and patterns
-- `notebooks/04_LSTM_Model.ipynb`: classical sequence model
-- `notebooks/05_Quantum_LSTM.ipynb`: hybrid quantum-classical model
-- `notebooks/06_Model_Comparison.ipynb`: compare all model scores
-- `notebooks/07_Multimodal_Model.ipynb`: weather + soil + NDVI + farm-input model
+* 🌾 **Crop Yield Forecasting**: XGBoost regression model predicting yield in **tons/hectare** and estimated production in **tons** based on 19 scaled & encoded features.
+* 🌱 **Intelligent Crop Recommendation**: Ranks available crops for any Tamil Nadu district and season by predicted yield. Zero fallback fabrication; displays actual matching candidate crops.
+* 🌦️ **2026 GEE Climate Telemetry**: Automated lookup of 13 satellite and soil parameters (Rainfall, Temperatures, Humidity, NDVI, EVI, Soil Moisture, LST, Soil Organic Carbon, Soil pH, etc.) derived from Google Earth Engine. Zero manual weather input required from farmers.
+* ⚛️ **Model Performance & Comparative Analytics**: Evaluated comparison between Random Forest Baseline (R²: 0.9547), Production XGBoost (R²: 0.9294), and Experimental Hybrid Quantum Random Forest (R²: -0.0424).
+* 🔒 **Secure Authentication**: Spring Security JWT authentication with BCrypt password hashing, role-based security, and strict user-history isolation.
+* 💻 **Modern Responsive UI**: React + Vite frontend with dark glassmorphism styling, interactive Recharts visualizations, district environmental snapshots, and grounded telemetry insights.
 
-## Recommended Starting Point
+---
 
-Start with one dataset only:
-- the FAOSTAT crop yield file in `datasets/raw/faostat_crop_yield_india.csv`
+## 📐 System Architecture & Workflow
 
-After that works, add:
-- weather data
-- soil data
-- NDVI or vegetation data
-- irrigation and fertilizer inputs
-
-Do not try to finish all datasets at once. Build the pipeline one phase at a time.
-
-Note:
-- This FAOSTAT file is India-wide, not Tamil Nadu-specific.
-- It is still a strong starter dataset for the project pipeline, preprocessing, and model comparison.
-
-## Dataset Sources
-
-Use these official sources as your starting point:
-- Crop production or yield: [Open Government Data Portal India](https://www.data.gov.in/) or [FAOSTAT production data](https://www.fao.org/faostat/en/#data/QCL)
-- Weather: [NASA POWER Data Access Viewer](https://power.larc.nasa.gov/data-access-viewer/) and [NASA POWER API docs](https://power.larc.nasa.gov/docs/services/api/)
-- Soil: [SoilGrids](https://isric.org/explore/soilgrids) and [ISRIC Data Hub](https://data.isric.org/geonetwork/srv/eng/catalog.search)
-- NDVI: [MOD13Q1 NDVI product](https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13q1-061) and [Earthdata Search](https://search.earthdata.nasa.gov/)
-- Irrigation and fertilizer: use state or district agriculture statistics from [data.gov.in](https://www.data.gov.in/) or your state agriculture department portal
-
-Suggested search terms:
-- `crop production`
-- `district wise crop production`
-- `area production yield`
-- `rainfall temperature humidity`
-- `soil properties`
-- `NDVI MODIS`
-
-## Project Roadmap
-
-### 1. Setup
-- Keep the virtual environment in `venv/`
-- Install dependencies from `requirements.txt`
-- Open Jupyter and confirm imports work
-
-### 2. Data Collection
-- Put the first CSV in `datasets/raw/`
-- Check the column names, row count, and missing values
-- Decide the prediction target
-
-### 3. Preprocessing
-- Standardize column names
-- Handle missing values
-- Remove duplicates
-- Convert data types
-- Save the cleaned result to `datasets/processed/`
-
-### 4. EDA
-- Study the target distribution
-- Check correlations and season trends
-- Compare states, crops, and years if they exist
-
-### 5. Baseline Model
-- Start with a simple classical model first
-- Build an LSTM only after the table is ready for sequence learning
-
-### 6. Quantum Model
-- Keep the quantum circuit small
-- Use a few compressed features as input
-- Compare it against the classical baseline
-
-### 7. Multimodal Model
-- Merge weather, soil, NDVI, irrigation, and fertilizer into one table
-- Keep a geographic key such as state or district
-- Use one branch for historical yield and one branch for the extra features
-- If real sources are unavailable, generate synthetic feature columns from the yield table for a demo run
-
-### 8. Comparison
-- Report MAE, RMSE, and R2
-- Add one comparison table and one comparison chart
-- Write a short conclusion about which model worked best
-
-## Suggested Team Split
-
-- Member 1: dataset collection and cleaning
-- Member 2: EDA and visualizations
-- Member 3: LSTM and hybrid quantum model
-- Member 4: report, slides, and demo
-
-## Quick Start
-
-Run these commands in the project folder:
-
-```bash
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-jupyter notebook
+```
+[ React + Vite Frontend ]
+       │
+       ▼ (JWT Auth / REST)
+[ Spring Boot 3.2 Backend ] (Port 8080) ──► [ H2 / MySQL Database ]
+       │
+       ▼ (HTTP Proxy / DTO Mapping)
+[ FastAPI ML Service ] (Port 8000)
+       │
+       ├─► [ 2026 GEE Telemetry Lookup ] (13 Environmental Parameters)
+       ├─► [ LabelEncoders & StandardScaler ] (19 Scaled Features)
+       └─► [ Frozen Production XGBoost Model ] (Yield Prediction Engine)
 ```
 
-If `pip` gives trouble on Windows, use `python -m pip` instead.
-If you are using `cmd.exe` instead of PowerShell, activate with `venv\Scripts\activate.bat`.
+### Prediction Pipeline Flow
+1. User provides: `State`, `District`, `Season`, `Crop`, `Year (2026)`, and `Area (Hectares)`.
+2. Categorical encoding via `label_encoders.pkl`.
+3. Automated 2026 environmental lookup from `Environmental_2026.csv` (13 parameters).
+4. Feature vector assembly into exact 19-feature order.
+5. Standard scaling via `scaler.pkl`.
+6. XGBoost regression prediction $\rightarrow$ Yield ($t/ha$) and Total Production ($tons$).
 
-## What To Aim For
+---
 
-By the end, you should have:
-- one clean dataset
-- one working baseline model
-- one quantum or hybrid model
-- one multimodal model with weather/soil/NDVI/features
-- one comparison notebook
-- one short report and presentation
+## 📊 Model Performance Benchmarks
 
-## Keep In Mind
+Evaluated on the test dataset in notebook `notebooks/06_quantum_model.ipynb`:
 
-- Keep raw data untouched
-- Save cleaned data separately
-- Use consistent file names
-- Test each notebook before moving forward
-- Document what each dataset contains
+| Model Architecture | Type | MAE (t/ha) | RMSE (t/ha) | R² Score | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Random Forest Regressor** | Classical ML (Ensemble) | `0.350734` | `0.700260` | `0.954726` | Evaluated Baseline |
+| **XGBoost Regressor** | Classical ML (Boosting) | `0.426647` | `0.874159` | `0.929448` | **Production Active** |
+| **Hybrid Quantum Random Forest** | Hybrid Quantum-Classical | `2.195334` | `3.360156` | `-0.042424` | Experimental (PennyLane + PCA) |
+
+> **Academic Note on Quantum Performance**: The Hybrid Quantum Random Forest uses Principal Component Analysis (PCA) to compress 19 features into 4 principal components, maps them onto a 4-qubit PennyLane circuit using `AngleEmbedding` and `BasicEntanglerLayers`, and feeds state measurements into a Random Forest regressor. As expected for compressed tabular data, classical models currently outperform quantum feature map compression on this dataset.
+
+---
+
+## 🎯 Verification Benchmark (Parity Standard)
+
+To verify zero pipeline drift across backend microservice releases:
+
+- **State**: Tamil Nadu
+- **District**: Ariyalur
+- **Season**: Kharif
+- **Crop**: Bajra
+- **Year**: 2026
+- **Area**: 100 Hectares
+- **Verified Prediction**: **3.07 t/ha** (**307.0 tons total production**)
+
+---
+
+## 🛠️ Technology Stack
+
+* **Frontend**: React 18, Vite, Lucide Icons, Recharts, Vanilla CSS (Glassmorphic Theme).
+* **Backend**: Spring Boot 3.2.3, Java 21, Spring Security, JWT (JJWT 0.12.5), Spring Data JPA, H2 / MySQL.
+* **ML Service**: Python 3.11, FastAPI, Uvicorn, Scikit-Learn 1.4+, XGBoost 2.0+, PennyLane 0.35+, Pandas, NumPy.
+* **Data Sources**: Google Earth Engine (GEE), OpenLandMap / SoilGrids, NASA POWER.
+
+---
+
+## 🚀 Quick Start Guide
+
+### 1. Python ML Service (FastAPI)
+```bash
+# Activate virtual environment
+.\venv\Scripts\Activate.ps1
+
+# Start Uvicorn FastAPI server on port 8000
+python -m uvicorn ml_service.main:app --host 127.0.0.1 --port 8000
+```
+
+### 2. Spring Boot Backend
+```bash
+cd backend
+mvn spring-boot:run
+# Server starts on http://localhost:8080
+```
+
+### 3. React Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+# Frontend starts on http://localhost:5173
+```
+
+---
+
+## 🧪 Running Verification & Tests
+
+### Backend Maven Tests
+```bash
+cd backend
+mvn clean compile test
+```
+
+### Python End-to-End Parity Verification
+```bash
+python verify_parity.py
+```
+
+### Frontend Production Build
+```bash
+cd frontend
+npm run build
+```
+
+---
+
+## 📜 License & Compliance
+
+Developed as an academic research prototype. All ML models, scalers, encoders, and datasets are preserved and frozen as verified production baselines.

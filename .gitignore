@@ -7,5 +7,10 @@ __pycache__/
 *.log
 .DS_Store
 Thumbs.db
-.mpl-cache/ 
-models/random_forest_model.pkl 
+.mpl-cache/
+models/random_forest_model.pkl
+.tools/
+.vscode/
+backend/target/
+frontend/node_modules/
+frontend/dist/
