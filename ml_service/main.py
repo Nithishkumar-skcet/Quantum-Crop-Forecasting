@@ -43,12 +43,12 @@ else:
 # ============================================================
 
 class YieldPredictionRequest(BaseModel):
-    state: str = Field("Tamil Nadu", example="Tamil Nadu")
-    district: str = Field(..., example="Ariyalur")
-    crop: str = Field(..., example="Bajra")
-    season: str = Field(..., example="Kharif")
-    year: int = Field(2026, example=2026)
-    area: float = Field(1.0, gt=0, example=100.0)
+    state: str = Field("Tamil Nadu", json_schema_extra={"example": "Tamil Nadu"})
+    district: str = Field(..., json_schema_extra={"example": "Ariyalur"})
+    crop: str = Field(..., json_schema_extra={"example": "Bajra"})
+    season: str = Field(..., json_schema_extra={"example": "Kharif"})
+    year: int = Field(2026, json_schema_extra={"example": 2026})
+    area: float = Field(1.0, gt=0, json_schema_extra={"example": 100.0})
 
     # Optional manual override for environmental features
     rainfall_mm: Optional[float] = None
@@ -79,11 +79,11 @@ class YieldPredictionResponse(BaseModel):
 
 
 class CropRecommendationRequest(BaseModel):
-    state: str = Field("Tamil Nadu", example="Tamil Nadu")
-    district: str = Field(..., example="Ariyalur")
-    season: str = Field(..., example="Kharif")
-    year: int = Field(2026, example=2026)
-    area: float = Field(1.0, gt=0, example=1.0)
+    state: str = Field("Tamil Nadu", json_schema_extra={"example": "Tamil Nadu"})
+    district: str = Field(..., json_schema_extra={"example": "Ariyalur"})
+    season: str = Field(..., json_schema_extra={"example": "Kharif"})
+    year: int = Field(2026, json_schema_extra={"example": 2026})
+    area: float = Field(1.0, gt=0, json_schema_extra={"example": 1.0})
 
 
 class CropRecommendationItem(BaseModel):

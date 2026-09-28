@@ -1,10 +1,13 @@
+import os
 import joblib
 import pandas as pd
 
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
 # Load model and preprocessing objects
-model = joblib.load("models/xgboost_model.pkl")
-scaler = joblib.load("models/scaler.pkl")
-label_encoders = joblib.load("models/label_encoders.pkl")
+model = joblib.load(os.path.join(PROJECT_ROOT, "models", "xgboost_model.pkl"))
+scaler = joblib.load(os.path.join(PROJECT_ROOT, "models", "scaler.pkl"))
+label_encoders = joblib.load(os.path.join(PROJECT_ROOT, "models", "label_encoders.pkl"))
 
 
 def recommend_crops(input_data, crop_list):

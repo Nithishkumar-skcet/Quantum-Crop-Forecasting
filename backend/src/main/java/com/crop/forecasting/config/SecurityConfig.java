@@ -38,12 +38,13 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/api/auth/**",
+                    "/api/metadata",
                     "/api/districts",
                     "/api/seasons",
                     "/api/crops",
                     "/api/environment/**",
-                    "/api/predictions",
-                    "/api/recommendations",
+                    "/api/predictions/**",
+                    "/api/recommendations/**",
                     "/api/model-performance",
                     "/api/prediction-history",
                     "/api/recommendation-history",

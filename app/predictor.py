@@ -1,21 +1,23 @@
+import os
 import joblib
 import pandas as pd
 
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 # --------------------------------------------------
 # Load trained model and preprocessing objects
 # --------------------------------------------------
 
-model = joblib.load("models/xgboost_model.pkl")
-scaler = joblib.load("models/scaler.pkl")
-label_encoders = joblib.load("models/label_encoders.pkl")
+model = joblib.load(os.path.join(PROJECT_ROOT, "models", "xgboost_model.pkl"))
+scaler = joblib.load(os.path.join(PROJECT_ROOT, "models", "scaler.pkl"))
+label_encoders = joblib.load(os.path.join(PROJECT_ROOT, "models", "label_encoders.pkl"))
 
 
 # --------------------------------------------------
 # Load latest environmental data
 # --------------------------------------------------
 
-ENVIRONMENTAL_DATA_PATH = "notebooks/datasets/processed/Environmental_2026.csv"
+ENVIRONMENTAL_DATA_PATH = os.path.join(PROJECT_ROOT, "notebooks", "datasets", "processed", "Environmental_2026.csv")
 
 
 environmental_data = pd.read_csv(ENVIRONMENTAL_DATA_PATH)

@@ -49,7 +49,7 @@ def run_parity_verification():
     print(f"Layer 1 Total Production ({area} ha): {tot_l1} tons")
 
     # Layer 1 Recommendation
-    df_dataset = pd.read_csv("notebooks/datasets/processed/Final_Crop_Yield_Dataset.csv")
+    df_dataset = pd.read_csv(os.path.join(PROJECT_ROOT, "notebooks", "datasets", "processed", "Final_Crop_Yield_Dataset.csv"))
     avail_crops_l1 = sorted(
         df_dataset[
             (df_dataset["District"] == district) &

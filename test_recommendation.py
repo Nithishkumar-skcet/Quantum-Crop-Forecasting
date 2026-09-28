@@ -1,8 +1,10 @@
+import os
 import pandas as pd
 
 from app.recommender import recommend_crops
 
-df = pd.read_csv("notebooks/datasets/processed/Final_Crop_Yield_Dataset.csv")
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+df = pd.read_csv(os.path.join(PROJECT_ROOT, "notebooks", "datasets", "processed", "Final_Crop_Yield_Dataset.csv"))
 
 crop_list = sorted(df["Crop"].unique())
 
